@@ -1,65 +1,110 @@
-// script.js
-
-let habits = JSON.parse(localStorage.getItem("habits")) || [];
-let isDarkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
-
-const habitList = document.getElementById("habitList");
 const habitInput = document.getElementById("habitInput");
 const addHabitBtn = document.getElementById("addHabit");
+const habitList = document.getElementById("habitList");
 const themeToggle = document.getElementById("themeToggle");
+const themeLabel = document.getElementById("themeLabel");
+const datePicker = document.getElementById("habitDate");
 const summaryText = document.getElementById("summaryText");
 
-document.body.classList.toggle("dark", isDarkMode);
-themeToggle.checked = isDarkMode;
+let habits = JSON.parse(localStorage.getItem("habits")) || {};
+let selectedDate = new Date().toISOString().split("T")[0];
+datePicker.value = selectedDate;
 
-function saveToLocalStorage() {
+function saveHabits() {
   localStorage.setItem("habits", JSON.stringify(habits));
-  localStorage.setItem("darkMode", JSON.stringify(themeToggle.checked));
-}
-
-function updateSummary() {
-  const completed = habits.filter(h => h.done).length;
-  summaryText.textContent = `${completed}/${habits.length} habits completed`;
 }
 
 function renderHabits() {
   habitList.innerHTML = "";
-  habits.forEach((habit, index) => {
-    const habitItem = document.createElement("div");
-    habitItem.className = "habit-item";
+  const dailyHabits = habits[selectedDate] || [];
+
+  dailyHabits.forEach((habit, index) => {
+    const habitDiv = document.createElement("div");
+    habitDiv.className = "habit";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = habit.done;
-    checkbox.addEventListener("change", () => {
-      habits[index].done = checkbox.checked;
-      saveToLocalStorage();
-      updateSummary();
-    });
+    checkbox.checked = habit.completed;
+    checkbox.onchange = () => {
+      habit.completed = checkbox.checked;
+      saveHabits();
+      renderSummary();
+    };
 
     const label = document.createElement("label");
     label.textContent = habit.name;
 
-    habitItem.appendChild(checkbox);
-    habitItem.appendChild(label);
-    habitList.appendChild(habitItem);
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-btn";
+    editBtn.textContent = "Edit";
+    editBtn.onclick = () => {
+      const newName = prompt("Edit habit name:", habit.name);
+      if (newName) {
+        habit.name = newName;
+        saveHabits();
+        renderHabits();
+      }
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "Delete";
+    deleteBtn.onclick = () => {
+      habits[selectedDate].splice(index, 1);
+      saveHabits();
+      renderHabits();
+      renderSummary();
+    };
+
+    habitDiv.appendChild(checkbox);
+    habitDiv.appendChild(label);
+    habitDiv.appendChild(editBtn);
+    habitDiv.appendChild(deleteBtn);
+    habitList.appendChild(habitDiv);
   });
-  updateSummary();
+
+  renderSummary();
 }
 
-addHabitBtn.addEventListener("click", () => {
-  const habitName = habitInput.value.trim();
-  if (habitName) {
-    habits.push({ name: habitName, done: false });
-    habitInput.value = "";
-    saveToLocalStorage();
+function renderSummary() {
+  const dailyHabits = habits[selectedDate] || [];
+  const completed = dailyHabits.filter(h => h.completed).length;
+  summaryText.textContent = `${completed}/${dailyHabits.length} habits completed`;
+}
+
+addHabitBtn.onclick = () => {
+  const name = habitInput.value.trim();
+  if (name) {
+    if (!habits[selectedDate]) habits[selectedDate] = [];
+    habits[selectedDate].push({ name, completed: false });
+    saveHabits();
     renderHabits();
+    habitInput.value = "";
+  }
+};
+
+habitInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    addHabitBtn.click();
   }
 });
 
-themeToggle.addEventListener("change", () => {
-  document.body.classList.toggle("dark", themeToggle.checked);
-  saveToLocalStorage();
-});
+datePicker.onchange = () => {
+  selectedDate = datePicker.value;
+  renderHabits();
+};
 
-renderHabits();
+themeToggle.onchange = () => {
+  document.body.classList.toggle("dark-mode");
+  themeLabel.textContent = document.body.classList.contains("dark-mode")
+    ? "Dark Mode"
+    : "Normal Mode";
+};
+
+window.onload = () => {
+  if (document.body.classList.contains("dark-mode")) {
+    themeToggle.checked = true;
+    themeLabel.textContent = "Dark Mode";
+  }
+  renderHabits();
+};
