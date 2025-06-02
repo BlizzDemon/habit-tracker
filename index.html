@@ -2,64 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Habit Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      text-align: center;
-      padding: 2rem;
-    }
-    h1 {
-      color: #333;
-      margin-bottom: 2rem;
-    }
-    .habit {
-      background-color: #e9ecef;
-      border-radius: 8px;
-      padding: 1rem;
-      margin: 1rem auto;
-      max-width: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 1.1rem;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Habit Tracker</h1>
+  <div class="container">
+    <h1>Habit Tracker</h1>
 
-  <div class="habit">
-    🚶 Walk 10 minutes
-    <input type="checkbox" />
+    <div class="controls">
+      <input type="text" id="habitInput" placeholder="New habit..." />
+      <button id="addHabit">Add Habit</button>
+      <label class="switch">
+        <input type="checkbox" id="themeToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div id="habitList" class="habit-list"></div>
+
+    <div class="summary">
+      <p id="summaryText">0/0 habits completed</p>
+    </div>
   </div>
 
-  <div class="habit">
-    📚 Study 1 hour
-    <input type="checkbox" />
-  </div>
-
-  <div class="habit">
-    💧 Drink 2L Water
-    <input type="checkbox" />
-  </div>
-
-  <div class="habit">
-    🛏️ Make Your Bed
-    <input type="checkbox" />
-  </div>
-
-  <div class="habit">
-    🧘 Meditate 10 min
-    <input type="checkbox" />
-  </div>
-
-  <div class="habit">
-    🍎 Eat a Healthy Meal
-    <input type="checkbox" />
-  </div>
-
+  <script src="script.js"></script>
 </body>
 </html>
