@@ -1,40 +1,140 @@
+/* style.css */
+
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  text-align: center;
-  padding: 20px;
-}
-
-.container {
-  background: white;
-  padding: 20px;
-  max-width: 400px;
-  margin: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-input {
-  padding: 10px;
-  width: 70%;
-  margin-bottom: 10px;
-}
-
-button {
-  padding: 10px 20px;
-  margin-left: 5px;
-  cursor: pointer;
-}
-
-ul {
-  list-style: none;
+  background-color: #f0f0f0;
+  color: #333;
+  margin: 0;
   padding: 0;
 }
 
-li {
-  text-align: left;
-  margin-top: 10px;
-  background: #e0ffe0;
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.controls input[type="text"] {
+  flex: 1;
   padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.controls button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background-color: #45a049;
+}
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.habit-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.summary {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Toggle Switch for Dark Mode */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 24px;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+/* Dark Mode Styles */
+body.dark {
+  background-color: #121212;
+  color: #eee;
+}
+
+body.dark .container {
+  background-color: #1e1e1e;
+}
+
+body.dark input[type="text"],
+body.dark .controls button {
+  background-color: #333;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+body.dark .controls button:hover {
+  background-color: #555;
 }
