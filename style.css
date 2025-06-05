@@ -16,14 +16,19 @@ body.dark-mode {
   color: #ffffff;
 }
 
-body[data-theme="neon"] {
-  background-color: #1b1b2f;
-  color: #00ffe7;
+body.theme-ocean {
+  background-color: #e0f7fa;
+  color: #006064;
 }
 
-body[data-theme="cyber"] {
-  background-color: #0f0f0f;
-  color: #f8ff00;
+body.theme-forest {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+body.theme-sunset {
+  background-color: #fff3e0;
+  color: #e65100;
 }
 
 .container {
@@ -32,27 +37,26 @@ body[data-theme="cyber"] {
   padding: 20px;
   border-radius: 10px;
   background: #f2f2f2;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in;
 }
 
 body.dark-mode .container {
   background: #1f1f1f;
 }
 
-.container h1 {
+h1 {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 2em;
+  font-size: 2rem;
 }
 
-.controls, .calendar, .theme-selector, .notification-toggle {
+.controls, .calendar-controls {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-bottom: 15px;
   flex-wrap: wrap;
-  align-items: center;
 }
 
 input[type="text"], input[type="date"], select {
@@ -60,22 +64,23 @@ input[type="text"], input[type="date"], select {
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 200px;
+  font-size: 14px;
 }
 
 button {
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
-  background: linear-gradient(135deg, #007bff, #00bfff);
+  background-color: #007bff;
   color: #fff;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   font-weight: bold;
 }
 
 button:hover {
-  transform: scale(1.05);
   background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 .habit-list {
@@ -105,17 +110,13 @@ body.dark-mode .habit {
 }
 
 .delete-btn, .edit-btn {
+  background-color: #dc3545;
   margin-left: 10px;
   padding: 5px 10px;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
 }
 
 .edit-btn {
@@ -173,27 +174,14 @@ input:checked + .slider:before {
   margin-top: 20px;
 }
 
-.mode-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 15px;
+#themeSelect {
+  font-size: 14px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
 }
 
-.heat-box {
-  width: 15px;
-  height: 15px;
-  background-color: #ccc;
-  margin: 2px;
-  display: inline-block;
-  border-radius: 3px;
-}
-
-#calendarHeatmap {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 10px;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
