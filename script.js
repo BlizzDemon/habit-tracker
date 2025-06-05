@@ -1,108 +1,123 @@
-// JavaScript file for Habit Tracker
-let habits = JSON.parse(localStorage.getItem('habits')) || [];
-let selectedDate = new Date().toISOString().split('T')[0];
+document.addEventListener("DOMContentLoaded", function () {
+  const habitInput = document.getElementById("habitInput");
+  const addHabitBtn = document.getElementById("addHabitBtn");
+  const habitList = document.getElementById("habitList");
+  const toggleDarkMode = document.getElementById("toggleDarkMode");
+  const darkModeStatus = document.getElementById("darkModeStatus");
+  const themeSelector = document.getElementById("themeSelector");
+  const reminderToggle = document.getElementById("reminderToggle");
+  const calendar = document.getElementById("calendar");
 
-const habitInput = document.getElementById('habit-input');
-const addBtn = document.getElementById('add-btn');
-const habitList = document.getElementById('habit-list');
-const toggleSwitch = document.getElementById('darkModeToggle');
-const modeLabel = document.getElementById('modeLabel');
-const calendarDate = document.getElementById('calendar-date');
-const progressBar = document.getElementById('progress-bar');
+  let habits = JSON.parse(localStorage.getItem("habits")) || [];
+  let completedHabits = JSON.parse(localStorage.getItem("completedHabits")) || {};
 
-function saveHabits() {
-  localStorage.setItem('habits', JSON.stringify(habits));
-}
+  function renderHabits() {
+    habitList.innerHTML = "";
+    habits.forEach((habit, index) => {
+      const habitDiv = document.createElement("div");
+      habitDiv.classList.add("habit");
 
-function renderHabits() {
-  habitList.innerHTML = '';
-  const todayHabits = habits.filter(h => h.date === selectedDate);
-  let completedCount = 0;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = completedHabits[habit] || false;
+      checkbox.addEventListener("change", () => toggleHabit(habit));
 
-  todayHabits.forEach((habit, index) => {
-    const div = document.createElement('div');
-    div.className = 'habit animate';
+      const label = document.createElement("label");
+      label.textContent = habit;
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = habit.completed;
-    checkbox.addEventListener('change', () => {
-      habit.completed = checkbox.checked;
-      saveHabits();
-      renderHabits();
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.classList.add("edit-btn");
+      editBtn.addEventListener("click", () => editHabit(index));
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.addEventListener("click", () => deleteHabit(index));
+
+      habitDiv.appendChild(checkbox);
+      habitDiv.appendChild(label);
+      habitDiv.appendChild(editBtn);
+      habitDiv.appendChild(deleteBtn);
+      habitList.appendChild(habitDiv);
     });
+    updateCalendar();
+  }
 
-    const label = document.createElement('label');
-    label.textContent = habit.name;
+  function toggleHabit(habit) {
+    completedHabits[habit] = !completedHabits[habit];
+    localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
+    updateCalendar();
+  }
 
-    const editBtn = document.createElement('button');
-    editBtn.className = 'edit-btn';
-    editBtn.textContent = 'Edit';
-    editBtn.onclick = () => {
-      const newName = prompt('Edit your habit:', habit.name);
-      if (newName) {
-        habit.name = newName;
-        saveHabits();
-        renderHabits();
-      }
-    };
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.onclick = () => {
-      habits = habits.filter((_, i) => !(i === index && habit.date === selectedDate));
-      saveHabits();
+  function addHabit() {
+    const habit = habitInput.value.trim();
+    if (habit) {
+      habits.push(habit);
+      habitInput.value = "";
+      localStorage.setItem("habits", JSON.stringify(habits));
       renderHabits();
-    };
+    }
+  }
 
-    if (habit.completed) completedCount++;
+  function deleteHabit(index) {
+    const removedHabit = habits.splice(index, 1);
+    delete completedHabits[removedHabit];
+    localStorage.setItem("habits", JSON.stringify(habits));
+    localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
+    renderHabits();
+  }
 
-    div.appendChild(checkbox);
-    div.appendChild(label);
-    div.appendChild(editBtn);
-    div.appendChild(deleteBtn);
-    habitList.appendChild(div);
+  function editHabit(index) {
+    const newHabit = prompt("Edit your habit:", habits[index]);
+    if (newHabit !== null && newHabit.trim() !== "") {
+      const oldHabit = habits[index];
+      habits[index] = newHabit.trim();
+      if (completedHabits[oldHabit]) {
+        completedHabits[newHabit.trim()] = completedHabits[oldHabit];
+        delete completedHabits[oldHabit];
+      }
+      localStorage.setItem("habits", JSON.stringify(habits));
+      localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
+      renderHabits();
+    }
+  }
+
+  addHabitBtn.addEventListener("click", addHabit);
+  habitInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      addHabit();
+    }
   });
 
-  // Update progress bar
-  const percent = todayHabits.length ? (completedCount / todayHabits.length) * 100 : 0;
-  progressBar.style.width = percent + '%';
-  progressBar.textContent = `${Math.round(percent)}% Completed`;
-}
+  toggleDarkMode.addEventListener("change", function () {
+    document.body.classList.toggle("dark-mode", toggleDarkMode.checked);
+    darkModeStatus.textContent = toggleDarkMode.checked ? "Dark Mode" : "Light Mode";
+  });
 
-function addHabit() {
-  const name = habitInput.value.trim();
-  if (name) {
-    habits.push({ name, completed: false, date: selectedDate });
-    habitInput.value = '';
-    saveHabits();
-    renderHabits();
-    playSound();
+  themeSelector.addEventListener("change", function () {
+    document.body.classList.remove("theme-ocean", "theme-forest", "theme-sunset");
+    if (themeSelector.value !== "") {
+      document.body.classList.add(`theme-${themeSelector.value}`);
+    }
+  });
+
+  reminderToggle.addEventListener("change", function () {
+    if (reminderToggle.checked) {
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          alert("Reminders Enabled!");
+        }
+      });
+    }
+  });
+
+  function updateCalendar() {
+    const today = new Date().toLocaleDateString();
+    const summary = document.getElementById("calendar");
+    const completedToday = habits.filter(habit => completedHabits[habit]);
+    summary.innerHTML = `✅ ${completedToday.length}/${habits.length} habits completed today (${today})`;
   }
-}
 
-addBtn.addEventListener('click', addHabit);
-habitInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') addHabit();
-});
-
-calendarDate.addEventListener('change', e => {
-  selectedDate = e.target.value;
   renderHabits();
 });
-
-toggleSwitch.addEventListener('change', () => {
-  document.body.classList.toggle('dark-mode');
-  modeLabel.textContent = document.body.classList.contains('dark-mode') ? 'Dark Mode' : 'Light Mode';
-});
-
-function playSound() {
-  const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
-  audio.play();
-}
-
-// Initial render
-calendarDate.value = selectedDate;
-renderHabits();
-modeLabel.textContent = document.body.classList.contains('dark-mode') ? 'Dark Mode' : 'Light Mode';
