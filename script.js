@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
+   const darkModeToggle = document.getElementById("darkModeToggle");
+  if (darkModeToggle) {
+    darkModeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  }
   const habitInput = document.getElementById("habitInput");
   const addHabitBtn = document.getElementById("addHabitBtn");
   const habitList = document.getElementById("habitList");
