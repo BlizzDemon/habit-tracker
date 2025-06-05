@@ -1,36 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Habit Tracker</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <h1>Habit Tracker</h1>
-
-    <div class="controls">
-      <input type="text" id="habitInput" placeholder="New habit..." />
-      <button id="addHabit">Add Habit</button>
+    <div class="mode-toggle">
+      <span id="mode-label">Light Mode</span>
       <label class="switch">
-        <input type="checkbox" id="themeToggle">
+        <input type="checkbox" id="modeSwitch">
         <span class="slider"></span>
       </label>
-      <span id="themeLabel">Normal Mode</span>
     </div>
-
-    <div class="calendar-controls">
-      <input type="date" id="habitDate" />
+    <div class="controls">
+      <input type="text" id="habitInput" placeholder="Add a habit">
+      <button id="addBtn"><i class="fas fa-plus"></i> Add</button>
     </div>
-
-    <div id="habitList" class="habit-list"></div>
-
-    <div class="summary">
-      <p id="summaryText">0/0 habits completed</p>
+    <div class="habit-list" id="habitList"></div>
+    <div class="calendar">
+      <input type="date" id="calendarDate">
+      <div id="calendarHeatmap"></div>
+    </div>
+    <div class="theme-selector">
+      <label for="theme">Theme:</label>
+      <select id="theme">
+        <option value="default">Default</option>
+        <option value="neon">Neon</option>
+        <option value="cyber">Cyberpunk</option>
+      </select>
+    </div>
+    <div class="notification-toggle">
+      <label>
+        <input type="checkbox" id="notificationToggle">
+        Enable Reminders
+      </label>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,44 +1,45 @@
-const habitInput = document.getElementById("habitInput");
-const addHabitBtn = document.getElementById("addHabit");
-const habitList = document.getElementById("habitList");
-const themeToggle = document.getElementById("themeToggle");
-const themeLabel = document.getElementById("themeLabel");
-const datePicker = document.getElementById("habitDate");
-const summaryText = document.getElementById("summaryText");
+// JavaScript file for Habit Tracker
+let habits = JSON.parse(localStorage.getItem('habits')) || [];
+let selectedDate = new Date().toISOString().split('T')[0];
 
-let habits = JSON.parse(localStorage.getItem("habits")) || {};
-let selectedDate = new Date().toISOString().split("T")[0];
-datePicker.value = selectedDate;
+const habitInput = document.getElementById('habit-input');
+const addBtn = document.getElementById('add-btn');
+const habitList = document.getElementById('habit-list');
+const toggleSwitch = document.getElementById('darkModeToggle');
+const modeLabel = document.getElementById('modeLabel');
+const calendarDate = document.getElementById('calendar-date');
+const progressBar = document.getElementById('progress-bar');
 
 function saveHabits() {
-  localStorage.setItem("habits", JSON.stringify(habits));
+  localStorage.setItem('habits', JSON.stringify(habits));
 }
 
 function renderHabits() {
-  habitList.innerHTML = "";
-  const dailyHabits = habits[selectedDate] || [];
+  habitList.innerHTML = '';
+  const todayHabits = habits.filter(h => h.date === selectedDate);
+  let completedCount = 0;
 
-  dailyHabits.forEach((habit, index) => {
-    const habitDiv = document.createElement("div");
-    habitDiv.className = "habit";
+  todayHabits.forEach((habit, index) => {
+    const div = document.createElement('div');
+    div.className = 'habit animate';
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
     checkbox.checked = habit.completed;
-    checkbox.onchange = () => {
+    checkbox.addEventListener('change', () => {
       habit.completed = checkbox.checked;
       saveHabits();
-      renderSummary();
-    };
+      renderHabits();
+    });
 
-    const label = document.createElement("label");
+    const label = document.createElement('label');
     label.textContent = habit.name;
 
-    const editBtn = document.createElement("button");
-    editBtn.className = "edit-btn";
-    editBtn.textContent = "Edit";
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-btn';
+    editBtn.textContent = 'Edit';
     editBtn.onclick = () => {
-      const newName = prompt("Edit habit name:", habit.name);
+      const newName = prompt('Edit your habit:', habit.name);
       if (newName) {
         habit.name = newName;
         saveHabits();
@@ -46,65 +47,62 @@ function renderHabits() {
       }
     };
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
-    deleteBtn.textContent = "Delete";
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = 'Delete';
     deleteBtn.onclick = () => {
-      habits[selectedDate].splice(index, 1);
+      habits = habits.filter((_, i) => !(i === index && habit.date === selectedDate));
       saveHabits();
       renderHabits();
-      renderSummary();
     };
 
-    habitDiv.appendChild(checkbox);
-    habitDiv.appendChild(label);
-    habitDiv.appendChild(editBtn);
-    habitDiv.appendChild(deleteBtn);
-    habitList.appendChild(habitDiv);
+    if (habit.completed) completedCount++;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    div.appendChild(editBtn);
+    div.appendChild(deleteBtn);
+    habitList.appendChild(div);
   });
 
-  renderSummary();
+  // Update progress bar
+  const percent = todayHabits.length ? (completedCount / todayHabits.length) * 100 : 0;
+  progressBar.style.width = percent + '%';
+  progressBar.textContent = `${Math.round(percent)}% Completed`;
 }
 
-function renderSummary() {
-  const dailyHabits = habits[selectedDate] || [];
-  const completed = dailyHabits.filter(h => h.completed).length;
-  summaryText.textContent = `${completed}/${dailyHabits.length} habits completed`;
-}
-
-addHabitBtn.onclick = () => {
+function addHabit() {
   const name = habitInput.value.trim();
   if (name) {
-    if (!habits[selectedDate]) habits[selectedDate] = [];
-    habits[selectedDate].push({ name, completed: false });
+    habits.push({ name, completed: false, date: selectedDate });
+    habitInput.value = '';
     saveHabits();
     renderHabits();
-    habitInput.value = "";
+    playSound();
   }
-};
+}
 
-habitInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    addHabitBtn.click();
-  }
+addBtn.addEventListener('click', addHabit);
+habitInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter') addHabit();
 });
 
-datePicker.onchange = () => {
-  selectedDate = datePicker.value;
+calendarDate.addEventListener('change', e => {
+  selectedDate = e.target.value;
   renderHabits();
-};
+});
 
-themeToggle.onchange = () => {
-  document.body.classList.toggle("dark-mode");
-  themeLabel.textContent = document.body.classList.contains("dark-mode")
-    ? "Dark Mode"
-    : "Normal Mode";
-};
+toggleSwitch.addEventListener('change', () => {
+  document.body.classList.toggle('dark-mode');
+  modeLabel.textContent = document.body.classList.contains('dark-mode') ? 'Dark Mode' : 'Light Mode';
+});
 
-window.onload = () => {
-  if (document.body.classList.contains("dark-mode")) {
-    themeToggle.checked = true;
-    themeLabel.textContent = "Dark Mode";
-  }
-  renderHabits();
-};
+function playSound() {
+  const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
+  audio.play();
+}
+
+// Initial render
+calendarDate.value = selectedDate;
+renderHabits();
+modeLabel.textContent = document.body.classList.contains('dark-mode') ? 'Dark Mode' : 'Light Mode';
