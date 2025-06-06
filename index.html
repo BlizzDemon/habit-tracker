@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Habit Tracker</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Habit Tracker</h1>
 
     <div class="controls">
-      <input type="text" id="habitInput" placeholder="Add a new habit..." />
-      <button id="addBtn">Add</button>
-      <button id="darkModeToggle">🌙 Dark Mode</button>
-      <button id="themeToggle">🎨 Theme</button>
-      <button id="reminderToggle">🔔 Enable Reminders</button>
+      <input type="text" id="habit-input" placeholder="Enter a habit" />
+      <button id="add-btn">Add</button>
     </div>
 
-    <div class="habit-list" id="habitList"></div>
+    <div class="controls">
+      <label class="switch">
+        <input type="checkbox" id="dark-mode-toggle">
+        <span class="slider"></span>
+      </label>
+      <span id="mode-label">Normal Mode</span>
+    </div>
+
+    <div class="controls">
+      <select id="theme-select">
+        <option value="">Default Theme</option>
+        <option value="theme-blue">Blue</option>
+        <option value="theme-green">Green</option>
+      </select>
+    </div>
+
+    <div id="habit-list" class="habit-list"></div>
   </div>
 
   <script src="script.js"></script>
