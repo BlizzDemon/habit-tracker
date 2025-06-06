@@ -1,129 +1,71 @@
-document.addEventListener("DOMContentLoaded", function () {
-   const darkModeToggle = document.getElementById("darkModeToggle");
-  if (darkModeToggle) {
-    darkModeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-    });
-  }
+document.addEventListener("DOMContentLoaded", () => {
   const habitInput = document.getElementById("habitInput");
-  const addHabitBtn = document.getElementById("addHabitBtn");
+  const addBtn = document.getElementById("addBtn");
   const habitList = document.getElementById("habitList");
-  const toggleDarkMode = document.getElementById("toggleDarkMode");
-  const darkModeStatus = document.getElementById("darkModeStatus");
-  const themeSelector = document.getElementById("themeSelector");
+  const darkModeToggle = document.getElementById("darkModeToggle");
+  const themeToggle = document.getElementById("themeToggle");
   const reminderToggle = document.getElementById("reminderToggle");
-  const calendar = document.getElementById("calendar");
 
-  let habits = JSON.parse(localStorage.getItem("habits")) || [];
-  let completedHabits = JSON.parse(localStorage.getItem("completedHabits")) || {};
-
+  // Load habits
   function renderHabits() {
+    const habits = JSON.parse(localStorage.getItem("habits")) || [];
     habitList.innerHTML = "";
+
     habits.forEach((habit, index) => {
-      const habitDiv = document.createElement("div");
-      habitDiv.classList.add("habit");
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = completedHabits[habit] || false;
-      checkbox.addEventListener("change", () => toggleHabit(habit));
-
-      const label = document.createElement("label");
-      label.textContent = habit;
-
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "Edit";
-      editBtn.classList.add("edit-btn");
-      editBtn.addEventListener("click", () => editHabit(index));
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.classList.add("delete-btn");
-      deleteBtn.addEventListener("click", () => deleteHabit(index));
-
-      habitDiv.appendChild(checkbox);
-      habitDiv.appendChild(label);
-      habitDiv.appendChild(editBtn);
-      habitDiv.appendChild(deleteBtn);
-      habitList.appendChild(habitDiv);
+      const habitItem = document.createElement("div");
+      habitItem.className = "habit";
+      habitItem.innerHTML = `
+        <label contenteditable="true">${habit}</label>
+        <button class="delete-btn" data-index="${index}">Delete</button>
+      `;
+      habitList.appendChild(habitItem);
     });
-    updateCalendar();
+
+    // Add delete functionality
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const index = e.target.getAttribute("data-index");
+        const habits = JSON.parse(localStorage.getItem("habits")) || [];
+        habits.splice(index, 1);
+        localStorage.setItem("habits", JSON.stringify(habits));
+        renderHabits();
+      });
+    });
   }
 
-  function toggleHabit(habit) {
-    completedHabits[habit] = !completedHabits[habit];
-    localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
-    updateCalendar();
-  }
-
+  // Add new habit
   function addHabit() {
     const habit = habitInput.value.trim();
-    if (habit) {
-      habits.push(habit);
-      habitInput.value = "";
-      localStorage.setItem("habits", JSON.stringify(habits));
-      renderHabits();
-    }
-  }
-
-  function deleteHabit(index) {
-    const removedHabit = habits.splice(index, 1);
-    delete completedHabits[removedHabit];
+    if (!habit) return;
+    const habits = JSON.parse(localStorage.getItem("habits")) || [];
+    habits.push(habit);
     localStorage.setItem("habits", JSON.stringify(habits));
-    localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
+    habitInput.value = "";
     renderHabits();
   }
 
-  function editHabit(index) {
-    const newHabit = prompt("Edit your habit:", habits[index]);
-    if (newHabit !== null && newHabit.trim() !== "") {
-      const oldHabit = habits[index];
-      habits[index] = newHabit.trim();
-      if (completedHabits[oldHabit]) {
-        completedHabits[newHabit.trim()] = completedHabits[oldHabit];
-        delete completedHabits[oldHabit];
-      }
-      localStorage.setItem("habits", JSON.stringify(habits));
-      localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
-      renderHabits();
-    }
-  }
-
-  addHabitBtn.addEventListener("click", addHabit);
+  // Add with Enter key
   habitInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      addHabit();
-    }
+    if (e.key === "Enter") addHabit();
   });
 
-  toggleDarkMode.addEventListener("change", function () {
-    document.body.classList.toggle("dark-mode", toggleDarkMode.checked);
-    darkModeStatus.textContent = toggleDarkMode.checked ? "Dark Mode" : "Light Mode";
+  addBtn.addEventListener("click", addHabit);
+
+  // Dark mode toggle
+  darkModeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
   });
 
-  themeSelector.addEventListener("change", function () {
-    document.body.classList.remove("theme-ocean", "theme-forest", "theme-sunset");
-    if (themeSelector.value !== "") {
-      document.body.classList.add(`theme-${themeSelector.value}`);
-    }
+  // Theme toggle (just example background color swap)
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("alt-theme");
   });
 
-  reminderToggle.addEventListener("change", function () {
-    if (reminderToggle.checked) {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          alert("Reminders Enabled!");
-        }
-      });
-    }
+  // Reminders (just logs — no Notification permission logic added yet)
+  reminderToggle.addEventListener("click", () => {
+    alert("Reminder enabled! (Demo only)");
   });
 
-  function updateCalendar() {
-    const today = new Date().toLocaleDateString();
-    const summary = document.getElementById("calendar");
-    const completedToday = habits.filter(habit => completedHabits[habit]);
-    summary.innerHTML = `✅ ${completedToday.length}/${habits.length} habits completed today (${today})`;
-  }
-
+  // Initialize
   renderHabits();
 });

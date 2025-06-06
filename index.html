@@ -1,44 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Habit Tracker</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1>Habit Tracker</h1>
 
     <div class="controls">
-      <input type="text" id="habitInput" placeholder="Enter a habit">
-      <button id="addHabit">Add</button>
-      <label class="switch">
-        <input type="checkbox" id="darkModeToggle">
-        <span class="slider"></span>
-      </label>
-      <span id="modeLabel">Light Mode</span>
-      <button id="enableReminder">Enable Reminders</button>
-      <select id="themeSelector">
-        <option value="default">Default</option>
-        <option value="neon">Neon</option>
-        <option value="retro">Retro</option>
-      </select>
+      <input type="text" id="habitInput" placeholder="Add a new habit..." />
+      <button id="addBtn">Add</button>
+      <button id="darkModeToggle">🌙 Dark Mode</button>
+      <button id="themeToggle">🎨 Theme</button>
+      <button id="reminderToggle">🔔 Enable Reminders</button>
     </div>
 
     <div class="habit-list" id="habitList"></div>
-
-    <div class="summary">
-      <h3>Today's Progress</h3>
-      <p id="progressSummary">0 / 0 habits completed</p>
-    </div>
-
-    <div class="calendar-controls">
-      <input type="date" id="datePicker">
-    </div>
-
-    <div id="calendar"></div>
   </div>
 
   <script src="script.js"></script>
